@@ -7,7 +7,7 @@ import signInForm from "../features/signInForm"
 
 const store = configureStore ({
     reducer: {
-        form : signInForm
+        user : signInForm
     }
 })
 

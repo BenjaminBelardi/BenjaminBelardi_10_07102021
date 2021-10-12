@@ -1,55 +1,54 @@
 /* ici il faut créer les action pour la validation et l'envoi du formulaire
 utilisation du slice de la librairie reduxjs/toolkit
 */
-
 import { createSlice } from "@reduxjs/toolkit";
 //importer le secteur ici
-import { selectForm } from "../utils/selector";
+import { selectUser} from "../utils/selector";
+
 
 
 
 // initial state of form feature fetch
 const initialState = {
-    status: 'void',
-    data: null,
-    error: null,
+    // status: 'void',
+    // data: null,
+    // error: null,
 }
 // userAccount = {login , password}
 export function submit(userAccount){
     // return a thunk
     return async (dispatch, getState) => {
-        const status = selectForm(getState()).status
-        if (status === 'pending') {
+        const selectUserByEmail = selectUser(userAccount.email)
+        const status = selectUserByEmail(getState()).status
+        if (status === 'pending' || status ==="updating" ) {
          return
     }
     dispatch(actions.fetching(userAccount))
     try {
         let login = JSON.stringify(userAccount)
-        console.log(login)
         const response = await fetch(
             "http://localhost:3001/api/v1/user/login", {
             method: "POST",
-             header:{
-                 'Accept': 'application/json',
+             headers:{
                  'Content-Type': 'application/json'
              },
             body: login
             }
         )
         // on récupère le token si le login et le mdp sont correct
-        const token = await response.json()
-        dispatch(actions.resolved(userAccount.email, token))
+        const data = await response.json()
+        dispatch(actions.resolved(userAccount, data))
         } catch (error) {
-        dispatch(actions.rejected(userAccount.email, error))
+        dispatch(actions.rejected(userAccount, error))
         }
     }
 }
 
 
 
-function setVoidIfUndefined(draft, userAccount) {
-    if (draft[userAccount] === undefined) {
-      draft[userAccount] = { status: 'void' }
+function setVoidIfUndefined(draft, user) {
+    if (draft[user] === undefined) {
+      draft[user] = { status: 'void' }
     }
   }
 
@@ -63,18 +62,18 @@ const {actions, reducer } = createSlice({
                 payload : {userAccount}
             }),
             reducer:(draft, action) => {
-                setVoidIfUndefined(draft, action.payload.userAccount)
-                if (draft[action.payload.userAccount].status === 'void') {
-                  draft[action.payload.userAccount].status = 'pending'
+                setVoidIfUndefined(draft, action.payload.userAccount.email)
+                if (draft[action.payload.userAccount.email].status === 'void') {
+                  draft[action.payload.userAccount.email].status = 'pending'
                   return
                 }
-                if (draft[action.payload.userAccount].status === 'rejected') {
-                  draft[action.payload.userAccount].error = null
-                  draft[action.payload.userAccount].status = 'pending'
+                if (draft[action.payload.userAccount.email].status === 'rejected') {
+                  draft[action.payload.userAccount.email].error = null
+                  draft[action.payload.userAccount.email].status = 'pending'
                   return
                 }
-                if (draft[action.payload.userAccount].status === 'resolved') {
-                  draft[action.payload.userAccount].status = 'updating'
+                if (draft[action.payload.userAccount.email].status === 'resolved') {
+                  draft[action.payload.userAccount.email].status = 'updating'
                   return
                 }
             },  
@@ -85,13 +84,13 @@ const {actions, reducer } = createSlice({
             }),
             // la fonction de reducer
             reducer: (draft, action) => {
-              setVoidIfUndefined(draft, action.payload.userAccount)
+              setVoidIfUndefined(draft, action.payload.userAccount.email)
               if (
-                draft[action.payload.userAccount].status === 'pending' ||
-                draft[action.payload.userAccount].status === 'updating'
+                draft[action.payload.userAccount.email].status === 'pending' ||
+                draft[action.payload.userAccount.email].status === 'updating'
               ) {
-                draft[action.payload.userAccount].data = action.payload.token
-                draft[action.payload.userAccount].status = 'resolved'
+                draft[action.payload.userAccount.email].data = action.payload.data
+                draft[action.payload.userAccount.email].status = 'resolved'
                 return
               }
               return
@@ -102,14 +101,14 @@ const {actions, reducer } = createSlice({
                 payload: {userAccount, error },
               }),
               reducer: (draft, action) => {
-                setVoidIfUndefined(draft, action.payload.userAccount)
+                setVoidIfUndefined(draft, action.payload.userAccount.email)
                 if (
-                  draft[action.payload.userAccount].status === 'pending' ||
-                  draft[action.payload.userAccount].status === 'updating'
+                  draft[action.payload.userAccount.email].status === 'pending' ||
+                  draft[action.payload.userAccount.email].status === 'updating'
                 ) {
-                  draft[action.payload.userAccount].error = action.payload.error
-                  draft[action.payload.userAccount].data = null
-                  draft[action.payload.userAccount].status = 'rejected'
+                  draft[action.payload.userAccount.email].error = action.payload.error
+                  draft[action.payload.userAccount.email].data = null
+                  draft[action.payload.userAccount].email.status = 'rejected'
                   return
                 }
                 return
