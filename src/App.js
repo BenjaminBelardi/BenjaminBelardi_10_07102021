@@ -1,5 +1,5 @@
 //**import router section */
-import { BrowserRouter,Switch, Route } from "react-router-dom";
+import {Router,Switch, Route } from "react-router-dom";
 import {history} from "./utils/history"
 // import Router from './components/Router';
 
@@ -28,7 +28,7 @@ const details ={
 function App() {
   return (
     <Provider store={store}>
-      <BrowserRouter history={history}>
+      <Router history={history}>
         <Header />
         <Switch>
           <Route exact path="/"
@@ -40,7 +40,7 @@ function App() {
           {/* <Dropdown date="June 20th, 2020" description="Golden Sun Bakery" amount="$5.00" balance="$2082.79" transactionDetails={details} /> */}
         </Switch>
         <Footer />
-      </BrowserRouter>
+      </Router>
     </Provider>
   );
 }

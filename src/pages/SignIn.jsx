@@ -4,7 +4,7 @@ import {useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {Form, Field} from 'react-final-form'
 import { FORM_ERROR } from 'final-form'
-import { submit } from '../features/signInForm'
+import { login } from '../features/signInForm'
 import { selectUser, selectUsers } from '../utils/selector'  
 
 //mock funtion to simulate the server response
@@ -40,17 +40,19 @@ const customField = ({type, label, input, meta: {touched, error} }) => (
 //     window.localStorage.setItem(userEmail)
 // }
 
-function SignInForm(props) {
+//snippet exemple
+// setSubmitted(true);
+//         if (username && password) {
+//             // get return url from location state or default to home page
+//             const { from } = location.state || { from: { pathname: "/" } };
+//             dispatch(userActions.login(username, password, from));
+//         }
+//     }
+
+function SignInForm() {
     const dispatch = useDispatch()
     const onSubmit = (values) => {
-        dispatch(submit(values))
-        .then(()=> {
-            const location = { 
-                pathname : "/profile",
-                state : {user : values.email}
-        }
-            props.history.push(location)
-        })
+        dispatch(login(values))
     }
 
 

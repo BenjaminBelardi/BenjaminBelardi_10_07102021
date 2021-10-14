@@ -1,24 +1,24 @@
 import AccountCard from "../components/AccountCard";
 import { Redirect } from "react-router";
-import { selectUserToken } from "../utils/selector";
-import { useSelector } from "react-redux";
+import { selectAuthUser } from "../utils/selector";
 import { useLocation } from "react-router";
 import {Form, Field} from 'react-final-form';
 import { useState } from "react";
+import { useSelector } from 'react-redux'  
 
-export default function Profile(props){
+
+export default function Profile(){
 
     // get the user email store in the history location state
     let location = useLocation()
-    console.log(location)
-    // get the user token by user email
-    const userToken = useSelector(selectUserToken(location.state.user))
-    
 
+    // get the user token by user email
+    const userConnected = useSelector(selectAuthUser) //?? location.state.user
+    
     const [userProfilOpen, setUserProfilOpen] = useState(false)
 
     // login page redirection if user not connected
-    if (!userToken){
+    if (!userConnected){
         return <Redirect to="/login" />
     }
 

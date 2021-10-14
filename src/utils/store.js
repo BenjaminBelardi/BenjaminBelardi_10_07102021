@@ -2,12 +2,12 @@
 
 
 import { configureStore }  from "@reduxjs/toolkit"
-import signInForm from "../features/signInForm"
+import login from "../features/signInForm"
 
 
 const store = configureStore ({
     reducer: {
-        user : signInForm
+        user : login
     }
 })
 

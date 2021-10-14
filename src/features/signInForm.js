@@ -3,118 +3,117 @@ utilisation du slice de la librairie reduxjs/toolkit
 */
 import { createSlice } from "@reduxjs/toolkit";
 //importer le selecteur ici
-import { selectUser} from "../utils/selector";
-
-
+import { selectAuthUser} from "../utils/selector";
 
 
 
 // initial state of form feature fetch
 const initialState = {
-    //name : null
-    // status: 'void',
-    // data: null,
-    // error: null,
+    login : null,
+    status: 'void',
+    data: null,
+    error: null,
 }
 // userAccount = {login , password}
-export function submit(userAccount){
+export function login(userAccount){
+    const login = userAccount.email
     // return a thunk
     return async (dispatch, getState) => {
-        const selectUserByEmail = selectUser(userAccount.email)
-        const status = selectUserByEmail(getState()).status
+        const status = selectAuthUser(getState()).status
         if (status === 'pending' || status ==="updating" ) {
          return
     }
-    dispatch(actions.fetching(userAccount))
+    dispatch(actions.fetching(login))
     try {
-        let login = JSON.stringify(userAccount)
+        const toSend = JSON.stringify(userAccount)
         const response = await fetch(
             "http://localhost:3001/api/v1/user/login", {
             method: "POST",
              headers:{
                  'Content-Type': 'application/json'
              },
-            body: login
+            body: toSend
             }
         )
         // on récupère le token si le login et le mdp sont correct
         const data = await response.json()
-        dispatch(actions.resolved(userAccount, data))
+        //const data = await handleResponse(response)
+        dispatch(actions.resolved(data))
+      //   .then(()=> {
+      //     const location = { 
+      //         pathname : "/profile",
+      //         state : {user : values.email}
+      // }
+      //     props.history.push(location)
+      // })
         } catch (error) {
-        dispatch(actions.rejected(userAccount, error))
+        dispatch(actions.rejected(error))
         }
     }
 }
 
 
+// function handleResponse(response) {
+//   return response.text().then(text => {
+//     const data = text && JSON.parse(text)
+//       if (!response.ok) {
+//           if (response.status === 400) {
+//               console.log("logOut")
+//           }
+//         const error = data && data.message
+//         return Promise.reject(error)
+//       }
+//     return data
+//   })
+// }
 
-function setVoidIfUndefined(draft, user) {
-    if (draft[user] === undefined) {
-      draft[user] = { status: 'void' }
-    }
-  }
 
 const {actions, reducer } = createSlice({
-    name: 'signInForm',
+    name: 'login',
     initialState,
     reducers:{
-        fetching: {
-            prepare: (userAccount) => ({
-                payload : {userAccount}
-            }),
-            reducer:(draft, action) => {
-                setVoidIfUndefined(draft, action.payload.userAccount.email)
-                if (draft[action.payload.userAccount.email].status === 'void') {
-                  draft[action.payload.userAccount.email].status = 'pending'
+      fetching :{
+        prepare: (login) => ({
+          payload: { login },
+        }),
+        reducer: (draft, action) => {
+                // update user name
+                draft.login = action.payload.login
+                if (draft.status === 'void') {
+                  draft.status = 'pending'
                   return
                 }
-                if (draft[action.payload.userAccount.email].status === 'rejected') {
-                  draft[action.payload.userAccount.email].error = null
-                  draft[action.payload.userAccount.email].status = 'pending'
+                if (draft.status === 'rejected') {
+                  draft.error = null
+                  draft.status = 'pending'
                   return
                 }
-                if (draft[action.payload.userAccount.email].status === 'resolved') {
-                  draft[action.payload.userAccount.email].status = 'updating'
+                if (draft.status === 'resolved') {
+                  draft.status = 'updating'
                   return
                 }
-            },  
-        },
-        resolved: { // prepare permet de modifier le payload
-            prepare: (userAccount, data) => ({
-              payload: { userAccount, data },
-            }),
-            // la fonction de reducer
-            reducer: (draft, action) => {
-              setVoidIfUndefined(draft, action.payload.userAccount.email)
-              if (
-                draft[action.payload.userAccount.email].status === 'pending' ||
-                draft[action.payload.userAccount.email].status === 'updating'
-              ) {
-                draft[action.payload.userAccount.email].data = action.payload.data
-                draft[action.payload.userAccount.email].status = 'resolved'
+          },
+      },  
+        resolved: (draft, action) => {
+          // if request in progress
+              if (draft.status === 'pending' ||draft.status === 'updating') {
+                // set in resolved state and store the data
+                draft.data = action.payload
+                draft.status = 'resolved'
                 return
               }
               return
             },
-        },
-        rejected:{
-            prepare: (userAccount, error) => ({
-                payload: {userAccount, error },
-              }),
-              reducer: (draft, action) => {
-                setVoidIfUndefined(draft, action.payload.userAccount.email)
-                if (
-                  draft[action.payload.userAccount.email].status === 'pending' ||
-                  draft[action.payload.userAccount.email].status === 'updating'
-                ) {
-                  draft[action.payload.userAccount.email].error = action.payload.error
-                  draft[action.payload.userAccount.email].data = null
-                  draft[action.payload.userAccount].email.status = 'rejected'
+        rejected: (draft, action) => {
+                if (draft.status === 'pending' || draft.status === 'updating') {
+                  draft.error = action.payload
+                  draft.data = null
+                  draft.status = 'rejected'
                   return
                 }
                 return
-              },
-            },
-        },     
-    })
+              }
+      }    
+  })
+
 export default reducer
