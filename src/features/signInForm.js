@@ -2,14 +2,16 @@
 utilisation du slice de la librairie reduxjs/toolkit
 */
 import { createSlice } from "@reduxjs/toolkit";
-//importer le secteur ici
+//importer le selecteur ici
 import { selectUser} from "../utils/selector";
+
 
 
 
 
 // initial state of form feature fetch
 const initialState = {
+    //name : null
     // status: 'void',
     // data: null,
     // error: null,
@@ -51,7 +53,6 @@ function setVoidIfUndefined(draft, user) {
       draft[user] = { status: 'void' }
     }
   }
-
 
 const {actions, reducer } = createSlice({
     name: 'signInForm',

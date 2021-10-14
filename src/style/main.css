@@ -253,7 +253,7 @@ body {
   flex: 1;
 }
 
-.edit-button {
+.profil-edit-btn {
   border-color: #00bc77;
   background-color: #00bc77;
   color: #fff;
@@ -264,6 +264,10 @@ body {
 .header {
   color: #fff;
   margin-bottom: 2rem;
+}
+
+.profil-field-wrapper, .profil-btn-wrapper{
+  display: flex;
 }
 
 .transaction-button {

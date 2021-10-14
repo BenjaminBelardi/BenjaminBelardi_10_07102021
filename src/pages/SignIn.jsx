@@ -1,10 +1,11 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserCircle } from '@fortawesome/free-solid-svg-icons'
+import { faUserCircle, faWindowRestore } from '@fortawesome/free-solid-svg-icons'
 import {useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {Form, Field} from 'react-final-form'
 import { FORM_ERROR } from 'final-form'
-import { submit } from '../features/signInForm'  
+import { submit } from '../features/signInForm'
+import { selectUser, selectUsers } from '../utils/selector'  
 
 //mock funtion to simulate the server response
 //const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -34,11 +35,24 @@ const customField = ({type, label, input, meta: {touched, error} }) => (
     </div>
 )
 
-function SignInForm() {
+// test pour stocker le JWT dans le local store
+// const storeUserConnected = (userEmail) => {
+//     window.localStorage.setItem(userEmail)
+// }
+
+function SignInForm(props) {
     const dispatch = useDispatch()
     const onSubmit = (values) => {
         dispatch(submit(values))
+        .then(()=> {
+            const location = { 
+                pathname : "/profile",
+                state : {user : values.email}
+        }
+            props.history.push(location)
+        })
     }
+
 
     return(
         <main className="main bg-dark">
