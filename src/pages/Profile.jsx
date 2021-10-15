@@ -13,7 +13,7 @@ export default function Profile(){
     let location = useLocation()
 
     // get the user token by user email
-    const userConnected = useSelector(selectAuthUser) //?? location.state.user
+    const userConnected = useSelector(selectAuthUser).isConnected //?? location.state.user
     
     const [userProfilOpen, setUserProfilOpen] = useState(false)
 

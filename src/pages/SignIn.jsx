@@ -49,10 +49,20 @@ const customField = ({type, label, input, meta: {touched, error} }) => (
 //         }
 //     }
 
-function SignInForm() {
+function SignInForm(props) {
     const dispatch = useDispatch()
     const onSubmit = (values) => {
         dispatch(login(values))
+        .then(()=> {
+            const location = { 
+                pathname : "/profile",
+                state : {user : values.email}
+        }
+            props.history.push(location)
+        })
+        .catch ((error) => {
+            return {[ FORM_ERROR ]: error}
+        })
     }
 
 
@@ -77,11 +87,12 @@ function SignInForm() {
                     return errors
                 }}
 
-                render={({handleSubmit, submitting}) => (
+                render={({handleSubmit, submitting, pristine, submitError}) => (
                     <form onSubmit={handleSubmit}>
+                        {submitError && <span>{submitError}</span>}
                         <Field name='email' label="Email" component={customField} type="email" />
                         <Field name='password' label="Password" component={customField} type="password" />
-                        <button className="sign-in-button" type='submit' disabled={submitting} >Sign In</button>
+                        <button className="sign-in-button" type='submit' disabled={submitting || pristine} >Sign In</button>
                     </form>
                 )}
             />

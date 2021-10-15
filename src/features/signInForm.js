@@ -4,16 +4,19 @@ utilisation du slice de la librairie reduxjs/toolkit
 import { createSlice } from "@reduxjs/toolkit";
 //importer le selecteur ici
 import { selectAuthUser} from "../utils/selector";
+import {fetchLogin} from "../services/auth.service";
 
 
 
 // initial state of form feature fetch
 const initialState = {
     login : null,
+    isConnected : false,
     status: 'void',
     data: null,
     error: null,
 }
+
 // userAccount = {login , password}
 export function login(userAccount){
     const login = userAccount.email
@@ -24,32 +27,35 @@ export function login(userAccount){
          return
     }
     dispatch(actions.fetching(login))
-    try {
-        const toSend = JSON.stringify(userAccount)
-        const response = await fetch(
-            "http://localhost:3001/api/v1/user/login", {
-            method: "POST",
-             headers:{
-                 'Content-Type': 'application/json'
-             },
-            body: toSend
-            }
-        )
+    //try {
+        // const toSend = JSON.stringify(userAccount)
+        // const response = await fetch(
+        //     "http://localhost:3001/api/v1/user/login", {
+        //     method: "POST",
+        //      headers:{
+        //          'Content-Type': 'application/json'
+        //      },
+        //     body: toSend
+        //     }
+
+        //)
         // on récupère le token si le login et le mdp sont correct
-        const data = await response.json()
-        //const data = await handleResponse(response)
-        dispatch(actions.resolved(data))
-      //   .then(()=> {
-      //     const location = { 
-      //         pathname : "/profile",
-      //         state : {user : values.email}
-      // }
-      //     props.history.push(location)
-      // })
-        } catch (error) {
-        dispatch(actions.rejected(error))
-        }
+        //const data = await response.json()
+        // const data = await handleResponse(response)
+        // dispatch(actions.resolved(data))
+        // } catch (error) {
+        // dispatch(actions.rejected(error))
+        // }
+    //}
+   try { 
+      const loginData = await fetchLogin (userAccount)
+      dispatch(actions.resolved(loginData))
+
+   } catch (error) {
+      dispatch(actions.rejected(error))
+      throw error
     }
+  }
 }
 
 
@@ -61,7 +67,7 @@ export function login(userAccount){
 //               console.log("logOut")
 //           }
 //         const error = data && data.message
-//         return Promise.reject(error)
+//         throw new Error (error)
 //       }
 //     return data
 //   })
@@ -98,6 +104,7 @@ const {actions, reducer } = createSlice({
           // if request in progress
               if (draft.status === 'pending' ||draft.status === 'updating') {
                 // set in resolved state and store the data
+                draft.isConected = true
                 draft.data = action.payload
                 draft.status = 'resolved'
                 return
