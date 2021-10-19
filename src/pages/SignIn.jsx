@@ -42,19 +42,37 @@ const customCheckBox = ({type, label, input}) =>(
 
 function SignInForm(props) {
     const dispatch = useDispatch()
+    // const onSubmit = (values) => {
+    //     dispatch(login(values))
+    //     .then(()=> {
+    //         const location = { 
+    //             pathname : "/profile",
+    //             state : {user : values.email}
+    //     }
+    //         props.history.push(location)
+    //     })
+    //     .catch ((error) => {
+    //             return { [FORM_ERROR] : error} 
+    //     })
+    // }
+
     const onSubmit = (values) => {
-        dispatch(login(values))
-        .then(()=> {
-            const location = { 
-                pathname : "/profile",
-                state : {user : values.email}
-        }
-            props.history.push(location)
-        })
-        .catch ((error) => {
-                return { [FORM_ERROR] : error} 
-        })
+        return new Promise(resolve => 
+            dispatch(login(values))
+            .then(()=> {
+                const location = { 
+                    pathname : "/profile",
+                    state : {user : values.email}
+                }
+                resolve(true)
+                props.history.push(location)
+            })
+            .catch ((error) => {
+                resolve({ [FORM_ERROR] : error}) 
+            })
+        )
     }
+
 
     return(
         <main className="main bg-dark">
@@ -78,7 +96,7 @@ function SignInForm(props) {
 
                 render={({handleSubmit,form, submitting, pristine, submitError}) => (
                     <form onSubmit={handleSubmit}>
-                        {submitError && <span>{submitError}</span>}
+                        {submitError && <span className="error">{submitError}</span>}
                         <Field name='email' label="Email" component={customField} type="email" />
                         <Field name='password' label="Password" component={customField} type="password" />
                         <Field name='remember' label="Remember" component={customCheckBox} type="checkbox" />
