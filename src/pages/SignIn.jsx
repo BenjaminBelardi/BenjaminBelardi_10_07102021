@@ -5,7 +5,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import {Form, Field} from 'react-final-form'
 import { FORM_ERROR } from 'final-form'
 import { login } from '../features/signInForm'
-import { selectUser, selectUsers } from '../utils/selector'  
+import { selectUser, selectUsers } from '../utils/selector'
+import { NavLink } from 'react-router-dom'  
 
 //mock funtion to simulate the server response
 //const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -21,33 +22,23 @@ import { selectUser, selectUsers } from '../utils/selector'
 //           window.alert('LOGIN SUCCESS!')
 //     }
 
-// const onSubmit = values => {
-//     //simulate delay response
-//     fectchUserData(values)
-//     }
-
-const customField = ({type, label, input, meta: {touched, error} }) => (
+const customField = ({label, input, meta: {touched, error} }) => (
     <div className="input-wrapper">
         <label htmlFor={label}>{label}</label>
-        <input {...input} type={type} id={label}/>
+        <input {...input} />
         {touched && error && 
         <span className="error">{error}</span>}
     </div>
 )
 
-// test pour stocker le JWT dans le local store
-// const storeUserConnected = (userEmail) => {
-//     window.localStorage.setItem(userEmail)
-// }
+const customCheckBox = ({type, label, input}) =>(
+    <div className="input-remember">
+        <input {...input}/>
+        <label htmlFor={label}>{label}</label>
+    </div>
+)
 
-//snippet exemple
-// setSubmitted(true);
-//         if (username && password) {
-//             // get return url from location state or default to home page
-//             const { from } = location.state || { from: { pathname: "/" } };
-//             dispatch(userActions.login(username, password, from));
-//         }
-//     }
+
 
 function SignInForm(props) {
     const dispatch = useDispatch()
@@ -61,10 +52,9 @@ function SignInForm(props) {
             props.history.push(location)
         })
         .catch ((error) => {
-            return {[ FORM_ERROR ]: error}
+                return { [FORM_ERROR] : error} 
         })
     }
-
 
     return(
         <main className="main bg-dark">
@@ -72,9 +62,8 @@ function SignInForm(props) {
             <FontAwesomeIcon icon={faUserCircle} />
             <h1>Sign In</h1>
             <Form
-                // onSubmite function promise resolve server side if login && mdp are valid
-                //onSubmit={onSubmit}
                 onSubmit={onSubmit}
+                
                 // validate function : valid the date before sending
                 validate={values => {
                     const errors ={}
@@ -87,15 +76,17 @@ function SignInForm(props) {
                     return errors
                 }}
 
-                render={({handleSubmit, submitting, pristine, submitError}) => (
+                render={({handleSubmit,form, submitting, pristine, submitError}) => (
                     <form onSubmit={handleSubmit}>
                         {submitError && <span>{submitError}</span>}
                         <Field name='email' label="Email" component={customField} type="email" />
                         <Field name='password' label="Password" component={customField} type="password" />
+                        <Field name='remember' label="Remember" component={customCheckBox} type="checkbox" />
                         <button className="sign-in-button" type='submit' disabled={submitting || pristine} >Sign In</button>
                     </form>
                 )}
             />
+            <NavLink to="/signup">Sign Up</NavLink>
             </section>         
         </main>
     )
