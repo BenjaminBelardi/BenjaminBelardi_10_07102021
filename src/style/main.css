@@ -4,6 +4,7 @@ html {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  min-height: 100vh;
 }
 
 body {
@@ -11,8 +12,6 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  /* a supprimer aprés la mise en place des composants */
-  /* background-color: #12002b */
 }
 
 .main {
@@ -202,6 +201,9 @@ body {
 .input-wrapper input {
   padding: 5px;
   font-size: 1.2rem;
+}
+.checkbox-wrapper{
+  text-align: unset ! important;
 }
 
 .footer {

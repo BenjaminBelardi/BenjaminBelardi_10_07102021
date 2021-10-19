@@ -11,9 +11,10 @@ import store from "./utils/store";
 import Header from './components/Header';
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
-import SignIn from "./pages/SignIn";
+import SignInForm from "./pages/SignIn";
 import Dropdown from "./components/Dropdown";
 import Profile from "./pages/Profile";
+import SignUpForm from "./pages/SignUp";
 
 //import style section
 import './style/main.css'
@@ -32,10 +33,16 @@ function App() {
         <Header />
         <Switch>
           <Route exact path="/"
-            component ={SignIn}
+            component ={Home}
+          />
+          <Route exact path="/login"
+            component ={SignInForm}
           />
           <Route exact path="/profile"
             component ={Profile}
+          />
+          <Route exact path="/signup"
+            component ={SignUpForm}
           />
           {/* <Dropdown date="June 20th, 2020" description="Golden Sun Bakery" amount="$5.00" balance="$2082.79" transactionDetails={details} /> */}
         </Switch>

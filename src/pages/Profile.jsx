@@ -1,10 +1,14 @@
 import AccountCard from "../components/AccountCard";
 import { Redirect } from "react-router";
-import { selectAuthUser } from "../utils/selector";
+import { selectAuthUser,  selectAuthUserProfil } from "../utils/selector";
+
 import { useLocation } from "react-router";
 import {Form, Field} from 'react-final-form';
 import { useState } from "react";
-import { useSelector } from 'react-redux'  
+import { useSelector, useDispatch} from 'react-redux'  
+import { useEffect } from "react";
+import { fetchOrUpdateUserProfil } from "../features/profile";
+
 
 
 export default function Profile(){
@@ -12,38 +16,54 @@ export default function Profile(){
     // get the user email store in the history location state
     let location = useLocation()
 
-    // get the user token by user email
-    const userConnected = useSelector(selectAuthUser).isConnected //?? location.state.user
+    const dispatch = useDispatch()
+
+    // get the user connected
+    const userConnected = useSelector(selectAuthUser).isConnected
+    const userInfo = useSelector(selectAuthUserProfil)
     
     const [userProfilOpen, setUserProfilOpen] = useState(false)
+    //let token = JSON.parse(sessionStorage.getItem("user")).token
+   
+    
+    useEffect(() => {
+        //get the user data
+        dispatch(fetchOrUpdateUserProfil("fetch"))
+        .catch ((error) => {
+            console.log("error")
+        })
+    },[dispatch])
+
 
     // login page redirection if user not connected
     if (!userConnected){
         return <Redirect to="/login" />
     }
+       
+        const customField = ({type, label, placeholder, input, meta: {touched, error} }) => (
+            <div className="input-wrapper">
+                <input {...input} type={type} id={label} placeholder={placeholder}/>
+                {touched && error && 
+                <span className="error">{error}</span>}
+            </div>
+        )
 
-    const customField = ({type, label, placeholder, input, meta: {touched, error} }) => (
-        <div className="input-wrapper">
-            <input {...input} type={type} id={label} placeholder={placeholder}/>
-            {touched && error && 
-            <span className="error">{error}</span>}
-        </div>
-    )
+        const displayProfilData = () => {
+            setUserProfilOpen(!userProfilOpen)
+        }
 
-    const displayProfilData = () => {
-        setUserProfilOpen(!userProfilOpen)
-    }
-
-    const onSubmit = (values) => {
-        console.log(values)
-    }
-
-
+        // update the user data
+        const onSubmit = (values) => {
+            dispatch(fetchOrUpdateUserProfil("update", values))
+            .catch ((error) => {
+                console.log("Profile error")
+            })
+        }
 
     return (
     <main className="main bg-dark">
         <div className="header">
-            <h1>Welcome back {location.state.user} !</h1>
+            <h1>Welcome back {userInfo.firstName} !</h1>
             { userProfilOpen && 
             <Form
                 onSubmit={onSubmit}
@@ -62,8 +82,8 @@ export default function Profile(){
                 render={({handleSubmit, submitting, pristine}) => (
                     <form onSubmit={handleSubmit}>
                          <div className="profil-field-wrapper">
-                            <Field name='firstName' label='firstName' placeholder='Nom' component={customField} type="text" />
-                            <Field name='lastName' label="lastName" placeholder='Prenom' component={customField} type="text" />
+                            <Field name='firstName' label='firstName' placeholder={userInfo.firstName} component={customField} type="text" />
+                            <Field name='lastName' label="lastName" placeholder={userInfo.lastName} component={customField} type="text" />
                         </div>
                         <div className="profil-btn-wrapper">
                             <button className="sign-in-button" type='submit' disabled={submitting || pristine} >Save</button>
@@ -72,7 +92,7 @@ export default function Profile(){
                     </form>
                 )}
             />}
-            <button className="profil-edit-btn" onClick={displayProfilData}>Edit Name</button>
+           <button className="profil-edit-btn" onClick={displayProfilData}>Edit Name</button>
         </div>
         <h2 className="sr-only">Accounts</h2>
             <AccountCard accountTitle="Argent Bank Chekking (x8349)" amount="$2,082.79" amountDesc="Available Balance"/>

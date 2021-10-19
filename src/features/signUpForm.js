@@ -4,7 +4,7 @@ utilisation du slice de la librairie reduxjs/toolkit
 import { createSlice } from "@reduxjs/toolkit";
 //importer le selecteur ici
 import { selectAuthUser , selectAuthUserProfil} from "../utils/selector";
-import {fetchLogin} from "../services/auth.service";
+import {createUser} from "../services/user.service";
 
 
 
@@ -13,13 +13,12 @@ import {fetchLogin} from "../services/auth.service";
 const initialState = {
     status: 'void',
     login : null,
-    isConnected : false,
     data: null,
     error: null,
 }
 
 // userAccount = {login , password}
-export function login(userAccount){
+export function signUp(userAccount){
     const login = userAccount.email
     // return a thunk
     return async (dispatch, getState) => {
@@ -28,30 +27,20 @@ export function login(userAccount){
          return
     }
     dispatch(actions.fetching(login))
-    try { 
-      const loginData = await fetchLogin (userAccount)
-      dispatch(actions.resolved(loginData))
 
-    } catch (error) {
+   try { 
+      const signUpData = await createUser (userAccount)
+      dispatch(actions.resolved(signUpData))
+
+   } catch (error) {
       dispatch(actions.rejected(error))
-      throw (error)
+      throw error
     }
   }
 }
 
-export function logout (){
-  return async (dispatch) => {
-    dispatch(actions.logout())
-    sessionStorage.removeItem("user")
-    sessionStorage.removeItem("userData")
-  }
-}
-
-
-
-
 const {actions, reducer } = createSlice({
-    name: 'login',
+    name: 'createUser',
     initialState,
     reducers:{
       fetching :{
@@ -80,7 +69,6 @@ const {actions, reducer } = createSlice({
           // if request in progress
               if (draft.status === 'pending' ||draft.status === 'updating') {
                 // set in resolved state and store the data
-                draft.isConnected = true
                 draft.data = action.payload
                 draft.status = 'resolved'
                 return
@@ -96,7 +84,7 @@ const {actions, reducer } = createSlice({
                 }
                 return
               },
-        logout : () => {
+        clearData : () => {
           return initialState
         } 
       }    
