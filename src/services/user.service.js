@@ -11,7 +11,6 @@ export const  fetchUserProfile = async (token) => {
         }
     )
     const jsonData = await handleResponse(response)
-    //const jsonData = await response.json()
     sessionStorage.setItem("userData", JSON.stringify({ jsonData }))
     return jsonData
 }
@@ -30,7 +29,6 @@ export const  updateUserProfile = async (token , userInfo) => {
         }
     )
     const jsonData = await handleResponse(response)
-    //const jsonData = await response.json()
     sessionStorage.setItem("userData", JSON.stringify({ jsonData }))
     return jsonData
 }
@@ -52,8 +50,6 @@ export const  createUser = async (userInfo) => {
 }
 
 
-
-
 function handleResponse(response) {
     return response.text().then(text => {
       const data = text && JSON.parse(text)
@@ -61,8 +57,8 @@ function handleResponse(response) {
             if (response.status === 400) {
                console.log("Bad Request")
             }
-          const error = data && data.message.Error
-          throw new Error(error)
+          const error = data && data.message
+          throw error
         }
       return data
     })

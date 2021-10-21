@@ -2,6 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 import { selectAuthUser , selectUserToken, selectAuthUserProfil} from "../utils/selector";
 import {fetchUserProfile, updateUserProfile } from "../services/user.service"
 
+
+
 const initialState = {
   status : "void",
   id: null,
@@ -15,9 +17,11 @@ const initialState = {
 export function fetchOrUpdateUserProfil (fetchOrUpdate, userInfo){
     return async (dispatch, getState) => {
         const user = selectAuthUser(getState()).login
-        const token = selectUserToken(getState())
+        const storageToken = localStorage.getItem('userTokens') && JSON.parse(localStorage.getItem('userTokens')).token
+        const freshToken = selectUserToken(getState())
+        const token = storageToken || freshToken
         const status = selectAuthUserProfil(getState()).status
-
+       
         if (status === 'pending' || status ==="updating" ) {
          return
     }
@@ -73,9 +77,10 @@ export function clearUserData(){
           },  
             resolved: (draft, action) => {
               // if request in progress
-                  if (draft.status === 'pending' ||draft.status === 'updating') {
+                  if (draft.status === 'pending' || draft.status === 'updating') {
                     // set in resolved state and store the data
                     draft.id = action.payload.id
+                    draft.email = action.payload.email
                     draft.firstName = action.payload.firstName
                     draft.lastName = action.payload.lastName
                     draft.status = 'resolved'

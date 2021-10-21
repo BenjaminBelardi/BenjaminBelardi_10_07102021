@@ -32,22 +32,18 @@ export default function Header () {
         <div>
             <NavLink className="main-nav-item" to="/login">
                 <FontAwesomeIcon icon={faUserCircle} />
-                {/* <i class="fa fa-user-circle"></i> */}
-                Sign In
+                <span className="nav-txt">Sign In</span>
             </NavLink>
         </div>):(
-        <div>
+        <div className="nav-block">
             <NavLink className="main-nav-item" to="/profile">
-                <FontAwesomeIcon icon={faUserCircle} />
-                {/* <i class="fa fa-user-circle"></i> */}
-                {userInfo.firstName}
+                <FontAwesomeIcon icon={faUserCircle} />{" "}
+                <span className="nav-txt">{userInfo.firstName}</span>
             </NavLink>
-            {/* <NavLink className="main-nav-item" to="/login" onClick> 
-                <FontAwesomeIcon icon={faSignOutAlt} />
-                Sign Out
-            </NavLink> */}
-            <FontAwesomeIcon icon={faSignOutAlt} />
-            <button className="main-nav-item" type='button' onClick={signOut}>Sign Out</button>
+            <NavLink className="main-nav-item" to="/" onClick={signOut}>
+            <FontAwesomeIcon icon={faSignOutAlt} />{" "}
+                <span className="nav-txt nav-txt-hidden">Sign Out</span>
+            </NavLink>
         </div>)}
 
         </nav>

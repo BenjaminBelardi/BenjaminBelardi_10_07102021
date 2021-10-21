@@ -1,15 +1,10 @@
-/* ici il faut créer les action pour la validation et l'envoi du formulaire
-utilisation du slice de la librairie reduxjs/toolkit
-*/
+
 import { createSlice } from "@reduxjs/toolkit";
-//importer le selecteur ici
-import { selectAuthUser , selectAuthUserProfil} from "../utils/selector";
-import {createUser} from "../services/user.service";
+import { selectAuthUser } from "../utils/selector";
+import { createUser } from "../services/user.service";
 
 
 
-
-// initial state of form feature fetch
 const initialState = {
     status: 'void',
     login : null,
@@ -17,7 +12,7 @@ const initialState = {
     error: null,
 }
 
-// userAccount = {login , password}
+
 export function signUp(userAccount){
     const login = userAccount.email
     // return a thunk

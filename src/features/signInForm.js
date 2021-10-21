@@ -1,12 +1,7 @@
-/* ici il faut créer les action pour la validation et l'envoi du formulaire
-utilisation du slice de la librairie reduxjs/toolkit
-*/
+
 import { createSlice } from "@reduxjs/toolkit";
-//importer le selecteur ici
-import { selectAuthUser , selectAuthUserProfil} from "../utils/selector";
+import { selectAuthUser } from "../utils/selector";
 import {fetchLogin} from "../services/auth.service";
-
-
 
 
 // initial state of form feature fetch
@@ -18,10 +13,14 @@ const initialState = {
     error: null,
 }
 
-// userAccount = {login , password}
-export function login(userAccount){
+/**
+ * @function
+ * @param userAccount = {login password}
+ *  */  
+
+export function login(userAccount, remember){
     const login = userAccount.email
-    // return a thunk
+    // return a redux thunk
     return async (dispatch, getState) => {
         const status = selectAuthUser(getState()).status
         if (status === 'pending' || status ==="updating" ) {
@@ -29,7 +28,7 @@ export function login(userAccount){
     }
     dispatch(actions.fetching(login))
     try { 
-      const loginData = await fetchLogin (userAccount)
+      const loginData = await fetchLogin (userAccount,remember)
       dispatch(actions.resolved(loginData))
 
     } catch (error) {
@@ -40,15 +39,14 @@ export function login(userAccount){
 }
 
 export function logout (){
+  // return a redux thunk
   return async (dispatch) => {
     dispatch(actions.logout())
     sessionStorage.removeItem("user")
     sessionStorage.removeItem("userData")
+    localStorage.removeItem("userTokens")
   }
 }
-
-
-
 
 const {actions, reducer } = createSlice({
     name: 'login',

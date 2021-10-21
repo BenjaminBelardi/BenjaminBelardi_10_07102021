@@ -7,7 +7,7 @@ html {
   min-height: 100vh;
 }
 
-body {
+body, #root {
   margin: 0;
   display: flex;
   flex-direction: column;
@@ -46,6 +46,7 @@ body {
 .main-nav a {
   font-weight: bold;
   color: #2c3e50;
+  display:flex;
 }
 
 .main-nav a.router-link-exact-active {
@@ -55,7 +56,16 @@ body {
 .main-nav-item {
   text-decoration: none;
   margin-right: 0.5rem;
+  font-size: 1rem;
 }
+
+button.main-nav-item{
+  border : none;
+  background: none;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
 
 .main-nav-item:hover {
   text-decoration: underline;
@@ -179,6 +189,23 @@ body {
   font-size: 5rem;
 }
 
+.nav-txt-hidden{
+  display: none;
+}
+
+.nav-txt{
+  margin-left: 5px;
+}
+@media (min-width: 440px) {
+  .nav-txt-hidden{
+    display: block;
+  }
+}
+.nav-block{
+  display: flex;
+  justify-content: space-between;
+}
+
 .input-remember {
   display: flex;
 }
@@ -204,6 +231,12 @@ body {
 }
 .checkbox-wrapper{
   text-align: unset ! important;
+}
+
+.error{
+  color: red;
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 .footer {
@@ -262,6 +295,19 @@ body {
   font-weight: bold;
   padding: 10px;
 }
+.profil-edit-content {
+  box-sizing: border-box;
+  background-color: white;
+  max-width: 50vh;
+  padding: 1rem;
+  margin:auto;
+}
+@media(min-width: 720px){
+  .profil-edit-content {
+  padding: 2rem;
+  }
+}
+
 
 .header {
   color: #fff;
@@ -270,7 +316,27 @@ body {
 
 .profil-field-wrapper, .profil-btn-wrapper{
   display: flex;
+  width: 100%;
+  justify-content: center;
 }
+.profil-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  width:45%;
+}
+
+.mgr2{
+  margin-right: 2rem;
+}
+
+.profil-input-wrapper:nth-child(1){
+  margin-right: 2rem;
+}
+.btn-profil-widht{
+  width: 33%;
+}
+
 
 .transaction-button {
   display: block;
