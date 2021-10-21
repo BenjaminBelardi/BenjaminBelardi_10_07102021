@@ -1,26 +1,17 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserCircle, faWindowRestore } from '@fortawesome/free-solid-svg-icons'
+import { faUserCircle} from '@fortawesome/free-solid-svg-icons'
 import {useEffect} from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch} from 'react-redux'
 import {Form, Field} from 'react-final-form'
 import { FORM_ERROR } from 'final-form'
 import { login } from '../features/signInForm'
-import { selectUser, selectUsers } from '../utils/selector'
-import { NavLink } from 'react-router-dom'  
+import { NavLink } from 'react-router-dom' 
+import { useHistory } from 'react-router'
 
-//mock funtion to simulate the server response
-//const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-// const onSubmit = async values => {
-//      //simulate delay response
-//     await sleep(300)
-//         if (values.username !== 'benjamin') {
-//             return { username: 'Unknown username' }
-//           }
-//           if (values.password !== 'belardi') {
-//             return { [FORM_ERROR]: 'Login Failed' }
-//           }
-//           window.alert('LOGIN SUCCESS!')
-//     }
+
+
+//get the token if user already connected
+const token = localStorage.getItem('userTokens') 
 
 const customField = ({label, input, meta: {touched, error} }) => (
     <div className="input-wrapper">
@@ -40,38 +31,37 @@ const customCheckBox = ({type, label, input}) =>(
 
 
 
-function SignInForm(props) {
-    const dispatch = useDispatch()
-    // const onSubmit = (values) => {
-    //     dispatch(login(values))
-    //     .then(()=> {
-    //         const location = { 
-    //             pathname : "/profile",
-    //             state : {user : values.email}
-    //     }
-    //         props.history.push(location)
-    //     })
-    //     .catch ((error) => {
-    //             return { [FORM_ERROR] : error} 
-    //     })
-    // }
 
-    const onSubmit = (values) => {
+function SignInForm() {
+    let history = useHistory()
+    const dispatch = useDispatch()
+    const onSubmit = (value) => {
         return new Promise(resolve => 
-            dispatch(login(values))
+            dispatch(login({email: value.email, password: value.password},value.remember))
             .then(()=> {
                 const location = { 
                     pathname : "/profile",
-                    state : {user : values.email}
+                    state : {user : value.email}
                 }
                 resolve(true)
-                props.history.push(location)
+                history.replace(location)
             })
             .catch ((error) => {
                 resolve({ [FORM_ERROR] : error}) 
             })
         )
     }
+
+    // automatic redirection if user already connected
+    useEffect(() => {
+        if (token){
+        const location = { 
+            pathname : "/profile"
+        }
+        history.replace(location)
+    }
+    },[history])
+        
 
 
     return(
@@ -81,8 +71,7 @@ function SignInForm(props) {
             <h1>Sign In</h1>
             <Form
                 onSubmit={onSubmit}
-                
-                // validate function : valid the date before sending
+                // validate function : valid the fields before sending
                 validate={values => {
                     const errors ={}
                     if (!values.email){
@@ -110,34 +99,3 @@ function SignInForm(props) {
     )
 }
 export default SignInForm
-  
-    
-
-    
-
-
-
-//     return (
-//         <main className="main bg-dark">
-//             <section className="sign-in-content">
-//             <FontAwesomeIcon icon={faUserCircle} />
-//             <h1>Sign In</h1>
-//             <Form>
-//                 <div className="input-wrapper">
-//                     <label htmlFor="username">Username</label>
-//                     <input type="text" id="username" />
-//                 </div>
-//                 <div className="input-wrapper">
-//                     <label htmlFor="password">Password</label>
-//                     <input type="password" id="password" />
-//                 </div>
-//                 <div className="input-remember">
-//                     <input type="checkbox" id="remember-me" />
-//                     <label htmlFor="remember-me">Remember me </label>
-//                 </div>
-//                 <button className="sign-in-button">Sign In</button>
-//             </Form>
-//             </section>
-//         </main>
-//     )
-// }
