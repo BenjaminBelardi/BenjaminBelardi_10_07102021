@@ -4,6 +4,7 @@ import Home from "../pages/Home";
 import Profile from "../pages/Profile";
 import SignInForm from "../pages/SignIn";
 import SignUpForm from "../pages/SignUp";
+import { Error } from "../pages/Error";
 import { useSelector } from "react-redux";
 import { selectAuthUser } from "../utils/selector";
 
@@ -24,13 +25,13 @@ export default function Router (){
             component : SignUpForm ,
             exact : true
         },
-        // {
-        //     path: '*',
-        //     component : :({errorNumber}) => {
-        //         return <Error errorNumber={'404'} />
-        //     }
+        {
+            path: '*',
+            component : ({errorNumber}) => {
+                return <Error errorNumber={'404'} />
+            }
 
-        // },
+        },
     ]
     const privateRoutes = [
         {

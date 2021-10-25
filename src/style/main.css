@@ -18,6 +18,14 @@ body, #root {
   flex: 1;
 }
 
+.main-error{
+  display: flex
+}
+
+.error-container{
+  margin: auto;
+}
+
 .bg-dark {
   background-color: #12002b;
 }
