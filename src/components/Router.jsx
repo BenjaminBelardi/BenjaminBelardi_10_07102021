@@ -25,13 +25,13 @@ export default function Router (){
             component : SignUpForm ,
             exact : true
         },
-        {
-            path: '*',
-            component : ({errorNumber}) => {
-                return <Error errorNumber={'404'} />
-            }
+        // {
+        //     path: '*',
+        //     component : ({errorNumber}) => {
+        //         return <Error errorNumber={'404'} />
+        //     }
 
-        },
+        // },
     ]
     const privateRoutes = [
         {
@@ -71,6 +71,9 @@ export default function Router (){
                 {privateRoutes.map((route, index)=> (
                     <PrivateRoute key={index} {...route} />
                 ))}
+                <Route path="*">
+                  <Error />
+                </Route> 
             </Switch>
     )
 }
