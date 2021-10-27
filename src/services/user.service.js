@@ -11,7 +11,7 @@ export const  fetchUserProfile = async (token) => {
         }
     )
     const jsonData = await handleResponse(response)
-    sessionStorage.setItem("userData", JSON.stringify({ jsonData }))
+    localStorage.setItem("userData", JSON.stringify({ jsonData }))
     return jsonData
 }
 
@@ -29,7 +29,7 @@ export const  updateUserProfile = async (token , userInfo) => {
         }
     )
     const jsonData = await handleResponse(response)
-    sessionStorage.setItem("userData", JSON.stringify({ jsonData }))
+    localStorage.setItem("userData", JSON.stringify({ jsonData }))
     return jsonData
 }
 

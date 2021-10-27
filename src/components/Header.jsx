@@ -13,15 +13,15 @@ export default function Header () {
 
     let location = useLocation()
     const dispatch = useDispatch()
-
     const userInfo = useSelector(selectAuthUserProfil)
+    const storageUserInfo = localStorage.getItem('userData') && JSON.parse(localStorage.getItem('userData')).jsonData.body
 
     const signOut = () => {
         dispatch(logout())
         dispatch(clearUserData())
     }
 
-
+    
     return(
         <nav className="main-nav">
         <NavLink className="" to="/">
@@ -30,9 +30,9 @@ export default function Header () {
         </NavLink>
         {location.pathname !== "/profile" ?(
         <div>
-            <NavLink className="main-nav-item" to="/login">
+            <NavLink className="main-nav-item" to={userInfo.firstName || storageUserInfo ? "/profile" : "/login"}>
                 <FontAwesomeIcon icon={faUserCircle} />
-                <span className="nav-txt">Sign In</span>
+                <span className="nav-txt">{userInfo.firstName ? userInfo.firstName : storageUserInfo ? storageUserInfo.firstName : "Sign In"}</span>
             </NavLink>
         </div>):(
         <div className="nav-block">

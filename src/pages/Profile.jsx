@@ -1,23 +1,27 @@
-import AccountCard from "../components/AccountCard";
-import { selectAuthUserProfil } from "../utils/selector";
-import {Form, Field} from 'react-final-form';
-import { useState } from "react";
+import AccountCard from "../components/AccountCard"
+import { selectAuthUserProfil } from "../utils/selector"
+import {Form, Field} from 'react-final-form'
+import { useState } from "react"
 import { useSelector, useDispatch} from 'react-redux'  
-import { useEffect } from "react";
-import { fetchOrUpdateUserProfil } from "../features/profile";
+import { useEffect } from "react"
+import { fetchOrUpdateUserProfil } from "../features/profile"
+import { logout } from '../features/signInForm'
+import {clearUserData} from '../features/profile'
+import { useHistory } from "react-router"
+import { FORM_ERROR } from 'final-form'
 
 
 
 export default function Profile(){
 
-   
+    const history = useHistory()
     const dispatch = useDispatch()
     const userInfo = useSelector(selectAuthUserProfil)
    
     //local state to store profil edit formular status (open or closed)
     const [userProfilOpen, setUserProfilOpen] = useState(false)
    
-    // function to open or closed the profil edit formular
+    // function to open or closed the profil edit form
     const displayProfilData = () => {
         setUserProfilOpen(!userProfilOpen)
     }
@@ -26,9 +30,14 @@ export default function Profile(){
     useEffect(() => {
         dispatch(fetchOrUpdateUserProfil("fetch"))
         .catch ((error) => {
-            console.log(error)
+            dispatch(logout())
+            dispatch(clearUserData())
+            const location = { 
+                pathname : "/"
+            }
+            history.replace(location)
         })
-    },[dispatch])
+    },[dispatch, history])
 
 
        
@@ -44,10 +53,15 @@ export default function Profile(){
 
     // send a request to update the user data
     const onSubmit = (values) => {
-        dispatch(fetchOrUpdateUserProfil("update", values))
-        .catch ((error) => {
-            console.log("Profile error")
-        })
+        return new Promise(resolve => 
+            dispatch(fetchOrUpdateUserProfil("update", values))
+            .then(()=> {
+                resolve(true)
+            })
+            .catch ((error) => {
+                resolve({ [FORM_ERROR] : error})
+            })
+        )
     }
 
     return (
@@ -69,10 +83,11 @@ export default function Profile(){
                     return errors
                 }}
 
-                render={({handleSubmit, submitting, pristine}) => (
+                render={({handleSubmit, submitting, pristine, submitError}) => (
                     <section className="profil-edit-content">
                     <form onSubmit={handleSubmit}>
                          <div className="profil-field-wrapper">
+                            {submitError && <span className="error">{submitError}</span>}
                             <Field name='firstName' label='firstName' placeholder={userInfo.firstName} component={customField} type="text" />
                             <Field name='lastName' label="lastName" placeholder={userInfo.lastName} component={customField} type="text" />
                         </div>

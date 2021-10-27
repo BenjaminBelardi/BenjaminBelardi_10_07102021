@@ -7,11 +7,9 @@ import { FORM_ERROR } from 'final-form'
 import { login } from '../features/signInForm'
 import { NavLink } from 'react-router-dom' 
 import { useHistory } from 'react-router'
+import { useState } from 'react'
 
 
-
-//get the token if user already connected
-const token = localStorage.getItem('userTokens') 
 
 const customField = ({label, input, meta: {touched, error} }) => (
     <div className="input-wrapper">
@@ -35,6 +33,8 @@ const customCheckBox = ({type, label, input}) =>(
 function SignInForm() {
     let history = useHistory()
     const dispatch = useDispatch()
+    //get the token if user already connected
+    const [token, setToken] = useState(null)
     const onSubmit = (value) => {
         return new Promise(resolve => 
             dispatch(login({email: value.email, password: value.password},value.remember))
@@ -54,13 +54,14 @@ function SignInForm() {
 
     // automatic redirection if user already connected
     useEffect(() => {
+        setToken(localStorage.getItem('userTokens'))
         if (token){
         const location = { 
             pathname : "/profile"
         }
         history.replace(location)
     }
-    },[history])
+    },[history,token])
         
 
 

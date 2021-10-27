@@ -1,3 +1,22 @@
+[![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/uses-css.svg)](https://forthebadge.com)
+[![React Logo](https://img.icons8.com/color/48/000000/react-native.png)](https://icons8.com/icon/123603/react-native)
+
+# Argent Bank
+
+## Prerequisite
+
+1. Install `yarn` with `npm install -g yarn`.
+2. Clone the backend Data from [GitHub](https://github.com/OpenClassrooms-Student-Center/Project-10-Bank-API)
+and follow the associated Readme.
+3. Clone the front-end from [GitHub](https://github.com/BenjaminBelardi/BenjaminBelardi_10_07102021).
+
+## Before start
+
+### `yarn install`
+
+Install all dependencies contained in the packadge.json
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

@@ -13,7 +13,9 @@ export const  fetchLogin = async (userAccount, remember) => {
     )
     const jsonData = await handleResponse(response)
     if (remember && jsonData.body.token){
-          localStorage.setItem("userTokens" , JSON.stringify({token : jsonData.body.token}))
+        //user connection timestamp + 1d
+          const tokenValidity = Date.now() + 8.64e+7
+          localStorage.setItem("userTokens" , JSON.stringify({token : jsonData.body.token, tokenValidity: tokenValidity }))
      }
     return jsonData
 }

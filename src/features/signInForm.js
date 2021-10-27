@@ -4,19 +4,16 @@ import { selectAuthUser } from "../utils/selector";
 import {fetchLogin} from "../services/auth.service";
 
 
-// initial state of form feature fetch
+// initial state of form feature login
 const initialState = {
     status: 'void',
     login : null,
     isConnected : false,
+    remember: false,
     data: null,
     error: null,
 }
 
-/**
- * @function
- * @param userAccount = {login password}
- *  */  
 
 export function login(userAccount, remember){
     const login = userAccount.email
@@ -42,8 +39,8 @@ export function logout (){
   // return a redux thunk
   return async (dispatch) => {
     dispatch(actions.logout())
-    sessionStorage.removeItem("user")
-    sessionStorage.removeItem("userData")
+    localStorage.removeItem("user")
+    localStorage.removeItem("userData")
     localStorage.removeItem("userTokens")
   }
 }
@@ -75,7 +72,7 @@ const {actions, reducer } = createSlice({
           },
       },  
         resolved: (draft, action) => {
-          // if request in progress
+          // request in progress
               if (draft.status === 'pending' ||draft.status === 'updating') {
                 // set in resolved state and store the data
                 draft.isConnected = true

@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { selectAuthUser } from "../utils/selector";
 
 export default function Router (){
+    
     const publicRroutes = [
         {
             path: '/',
@@ -24,14 +25,7 @@ export default function Router (){
             path: '/signup',
             component : SignUpForm ,
             exact : true
-        },
-        // {
-        //     path: '*',
-        //     component : ({errorNumber}) => {
-        //         return <Error errorNumber={'404'} />
-        //     }
-
-        // },
+        }
     ]
     const privateRoutes = [
         {
@@ -41,14 +35,27 @@ export default function Router (){
         },
     ]
 
+    function tokenValidity(){
+      const tokenValidityDate = localStorage.getItem('userTokens') && JSON.parse(localStorage.getItem('userTokens')).validityDate
+      const dateNow = Date.now()
+      if (tokenValidityDate < dateNow ){
+        localStorage.removeItem('userTokens')
+        return false
+        } else {
+          return true
+        }
+      }
+
     function PrivateRoute({ component : Children, ...rest }) {
+
         let userConnected = useSelector(selectAuthUser).isConnected;
-        let token = localStorage.getItem('userTokens') 
+        let tokenValid = tokenValidity()
+        
         return (
           <Route
             {...rest}
             render={({ location }) =>
-              userConnected || token ? (
+              userConnected || tokenValid ? (
                 < Children />
               ) : (
                 <Redirect
